@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cstring>
 #include <complex>
+#include <chrono>
 
 void WriteTGA_RGB(const char* filename, unsigned char* data, unsigned int width, unsigned int height)
 {
@@ -47,6 +48,8 @@ void WriteTGA_RGB(const char* filename, unsigned char* data, unsigned int width,
 
 int main()
 {
+	auto start = std::chrono::high_resolution_clock::now();
+
 	MPI::Init();
 	int rank = MPI::COMM_WORLD.Get_rank();
 	int cluster = MPI::COMM_WORLD.Get_size();
@@ -75,6 +78,9 @@ int main()
 		delete status;
 		delete[] data;
 		delete[] buf;
+		auto end = std::chrono::high_resolution_clock::now();
+		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+		std::cout << duration.count() << " milliseconds" << std::endl;
 		MPI::Finalize();
 	} else {
 		std::complex<double> K(0.353, 0.288);
