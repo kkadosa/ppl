@@ -83,14 +83,14 @@ int main()
 		std::cout << duration.count() << " milliseconds" << std::endl;
 		MPI::Finalize();
 	} else {
-		std::complex<double> K(0.353, 0.288);
 		std::complex<double> center(-1.68, -1.23);
 		double scale = 2.35;
 		const unsigned int maxIterations = 100;
-
-		for (unsigned int y = rank - 1; y < size; y += cluster - 1) {
+		std::cout << rank << " a" << std::endl;
+		for (unsigned int y = (rank - 1); y < size; y += (cluster - 1)) {
 			bool started = false;
 			unsigned int begin;
+			std::cout << rank << " l" << std::endl;
 			for (unsigned int x = 0; x < size; ++x) {
 				bool black = false;
 
