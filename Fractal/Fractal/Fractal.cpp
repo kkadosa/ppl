@@ -48,8 +48,6 @@ void WriteTGA_RGB(const char* filename, unsigned char* data, unsigned int width,
 
 int main()
 {
-	auto start = std::chrono::high_resolution_clock::now();
-
 	MPI::Init();
 	
 	int rank = MPI::COMM_WORLD.Get_rank();
@@ -57,6 +55,7 @@ int main()
 	std::cout << rank << " c" << std::endl;
 	const unsigned int size = 1000;
 	if (rank == 0) {
+		auto start = std::chrono::high_resolution_clock::now();
 		unsigned char* data = new unsigned char[size * size * 3];
 		std::memset(data, 0, size * size * 3 * sizeof(unsigned char));
 
