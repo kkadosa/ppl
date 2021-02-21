@@ -49,10 +49,9 @@ void WriteTGA_RGB(const char* filename, unsigned char* data, unsigned int width,
 int main()
 {
 	MPI::Init();
-	
+	std::cout << "f" << std::endl;
 	int rank = MPI::COMM_WORLD.Get_rank();
 	int cluster = MPI::COMM_WORLD.Get_size();
-	std::cout << rank << " c" << std::endl;
 	const unsigned int size = 1000;
 	if (rank == 0) {
 		auto start = std::chrono::high_resolution_clock::now();
@@ -91,7 +90,6 @@ int main()
 		for (unsigned int y = (rank - 1); y < size; y += (cluster - 1)) {
 			bool started = false;
 			unsigned int begin;
-			std::cout << rank << " l" << std::endl;
 			for (unsigned int x = 0; x < size; ++x) {
 				bool black = false;
 
