@@ -46,40 +46,70 @@ void WriteTGA_RGB(const char* filename, unsigned char* data, unsigned int width,
 
 int main()
 {
-	const unsigned int domainWidth = 1024;
-	const unsigned int domainHeight = 1024;
-	unsigned char* data = new unsigned char[domainWidth * domainHeight * 3];
-	std::memset(data, 0, domainWidth * domainHeight * 3 * sizeof(unsigned char));
+	MPI::Init();
+	int rank = MPI::COMM_WORLD.Get_rank();
+	int cluster = MPI::COMM_WORLD.Get_size();
+	const unsigned int size = 1000;
+	if (rank == 0) {
+		unsigned char* data = new unsigned char[size * size * 3];
+		std::memset(data, 0, size * size * 3 * sizeof(unsigned char));
 
-	std::complex<double> K(0.353, 0.288);
-	std::complex<double> center(-1.68, -1.23);
-	double scale = 2.35;
+		int finished = 1;
 
-	const unsigned int maxIterations = 100;
+		while (finished < cluster) {
+			unsigned int buf[3];
+			MPI::Status status;
+			MPI::COMM_WORLD.Recv(buf, 3, MPI_UINT32_T, MPI_ANY_SOURCE, MPI_ANY_TAG, status);
+			int tag = status.Get_tag();
+			if (tag == 0) {
+				unsigned char* start = data + 3 * buf[0] * size + 3 * buf[1];
+				std::memset(start, -1, 3 * buf[2] - buf[1] * sizeof(unsigned char));
+			}
+			else if (tag == 1) {
+				++finished;
+			}
+			WriteTGA_RGB("mandelbrot.tga", data, size, size);
+			delete[] data;
+		}
+	} else {
+		std::complex<double> K(0.353, 0.288);
+		std::complex<double> center(-1.68, -1.23);
+		double scale = 2.35;
+		const unsigned int maxIterations = 100;
 
-#pragma omp parallel for
-	for (unsigned int y = 0; y < domainHeight; ++y)
-	{
-		for (unsigned int x = 0; x < domainWidth; ++x)
-		{
-			std::complex<double> c(x / (double)domainWidth * scale + center.real(),
-				y / (double)domainHeight * scale + center.imag());
+		for (unsigned int y = rank - 1; y < size; y += rank - 1) {
+			bool started = false;
+			unsigned int begin;
+			for (unsigned int x = 0; x < size; ++x) {
+				bool black = false;
 
-			std::complex<double> z(c);
-			for (unsigned int iteration = 0; iteration < maxIterations; ++iteration)
-			{
-				z = z * z + c;
-				if (std::abs(z) > 1.0f)
-				{
-					data[(x + y * domainWidth) * 3 + 0] = 255;
-					data[(x + y * domainWidth) * 3 + 1] = 255;
-					data[(x + y * domainWidth) * 3 + 2] = 255;
+				std::complex<double> c(x / (double)size * scale + center.real(),
+					y / (double)size * scale + center.imag());
+				std::complex<double> z(c);
+
+				for (unsigned int iteration = 0; iteration < maxIterations && !black; ++iteration) {
+					z = z * z + c;
+					black = std::abs(z) > 1.0f;
 				}
+
+				if (started) {
+					if (!black) {
+						unsigned int buf[3] = { y, begin, x };
+						started = false;
+						MPI::COMM_WORLD.Send(buf, 3, MPI_UINT32_T, 0, 0);
+					}
+				} else {
+					if (black) {
+						started = true;
+						begin = x;
+					}
+				}
+			}
+			if (started) {
+				unsigned int buf[3] = { y, begin, size };
+				MPI::COMM_WORLD.Send(buf, 3, MPI_UINT32_T, 0, 0);
 			}
 		}
 	}
-
-	WriteTGA_RGB("mandelbrot.tga", data, domainWidth, domainHeight);
-	delete[] data;
 	return 0;
 }
