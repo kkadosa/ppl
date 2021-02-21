@@ -63,7 +63,7 @@ int main()
 			int tag = status->Get_tag();
 			if (tag == 0) {
 				unsigned char* start = data + 3 * (buf[0] * size + buf[1]);
-				//std::cout << "teve " << buf[0] << " " << buf[1] << " " << buf[2] << std::endl;
+				std::cout << "teve " << buf[0] << " " << buf[1] << " " << buf[2] << std::endl;
 				std::memset(start, -1, 3 * buf[2] - buf[1] * sizeof(unsigned char));
 			}
 			else if (tag == 1) {
@@ -82,7 +82,7 @@ int main()
 		double scale = 2.35;
 		const unsigned int maxIterations = 100;
 
-		for (unsigned int y = rank - 1; y < size; y += rank - 1) {
+		for (unsigned int y = rank - 1; y < size; y += size - 1) {
 			bool started = false;
 			unsigned int begin;
 			for (unsigned int x = 0; x < size; ++x) {
@@ -110,12 +110,10 @@ int main()
 					}
 				}
 			}
-			/*
 			if (started) {
 				unsigned int buf[3] = { y, begin, size };
 				MPI::COMM_WORLD.Send(buf, 3, MPI_UINT32_T, 0, 0);
 			}
-			*/
 		}
 		unsigned int buf[3] = { 1, 2, 3};
 		MPI::COMM_WORLD.Send(buf, 3, MPI_UINT32_T, 0, 1);
