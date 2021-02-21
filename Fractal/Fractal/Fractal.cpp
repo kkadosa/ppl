@@ -74,6 +74,7 @@ int main()
 		WriteTGA_RGB("mandelbrot.tga", data, size, size);
 		delete[] data;
 		delete[] buf;
+		MPI::Finalize();
 	} else {
 		std::complex<double> K(0.353, 0.288);
 		std::complex<double> center(-1.68, -1.23);
@@ -113,6 +114,9 @@ int main()
 				MPI::COMM_WORLD.Send(buf, 3, MPI_UINT32_T, 0, 0);
 			}
 		}
+		unsigned int buf[3] = { 1, 2, 3};
+		MPI::COMM_WORLD.Send(buf, 3, MPI_UINT32_T, 0, 1);
+		MPI::Finalize();
 	}
 	return 0;
 }
