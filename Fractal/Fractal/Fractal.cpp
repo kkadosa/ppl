@@ -57,11 +57,10 @@ int main()
 
 		int finished = 1;
 		unsigned int* buf = new unsigned int[3];
+		MPI::Status* status = new MPI::Status();
 		while (finished < cluster) {
-			
-			MPI::Status status;
-			MPI::COMM_WORLD.Recv(buf, 3, MPI_UINT32_T, MPI_ANY_SOURCE, MPI_ANY_TAG, status);
-			int tag = status.Get_tag();
+			MPI::COMM_WORLD.Recv(buf, 3, MPI_UINT32_T, MPI_ANY_SOURCE, MPI_ANY_TAG, *status);
+			int tag = status->Get_tag();
 			if (tag == 0) {
 				unsigned char* start = data + 3 * (buf[0] * size + buf[1]);
 				std::cout << "teve " << buf[0] << " " << buf[1] << " " << buf[2] << std::endl;
@@ -72,6 +71,7 @@ int main()
 			}
 		}
 		WriteTGA_RGB("mandelbrot.tga", data, size, size);
+		delete status;
 		delete[] data;
 		delete[] buf;
 		MPI::Finalize();
