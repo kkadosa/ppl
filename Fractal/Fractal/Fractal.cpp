@@ -3,6 +3,7 @@
 
 #include "mpi.h"
 #include <cstdlib>
+#include <iostream>
 #include <cstdio>
 #include <cstring>
 #include <complex>
@@ -63,6 +64,7 @@ int main()
 			int tag = status.Get_tag();
 			if (tag == 0) {
 				unsigned char* start = data + 3 * (buf[0] * size + buf[1]);
+				std::cout << "teve " << buf[0] << " " << buf[1] << " " << buf[2] << std::endl;
 				std::memset(start, -1, 3 * buf[2] - buf[1] * sizeof(unsigned char));
 			}
 			else if (tag == 1) {
