@@ -55,22 +55,23 @@ int main()
 		std::memset(data, 0, size * size * 3 * sizeof(unsigned char));
 
 		int finished = 1;
-
+		unsigned int* buf = new unsigned int[3];
 		while (finished < cluster) {
-			unsigned int buf[3];
+			
 			MPI::Status status;
 			MPI::COMM_WORLD.Recv(buf, 3, MPI_UINT32_T, MPI_ANY_SOURCE, MPI_ANY_TAG, status);
 			int tag = status.Get_tag();
 			if (tag == 0) {
-				unsigned char* start = data + 3 * buf[0] * size + 3 * buf[1];
+				unsigned char* start = data + 3 * (buf[0] * size + buf[1]);
 				std::memset(start, -1, 3 * buf[2] - buf[1] * sizeof(unsigned char));
 			}
 			else if (tag == 1) {
 				++finished;
 			}
-			WriteTGA_RGB("mandelbrot.tga", data, size, size);
-			delete[] data;
 		}
+		WriteTGA_RGB("mandelbrot.tga", data, size, size);
+		delete[] data;
+		delete[] buf;
 	} else {
 		std::complex<double> K(0.353, 0.288);
 		std::complex<double> center(-1.68, -1.23);
