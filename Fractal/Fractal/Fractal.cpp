@@ -82,7 +82,7 @@ int main()
 		double scale = 2.35;
 		const unsigned int maxIterations = 100;
 
-		for (unsigned int y = rank - 1; y < size; y += size - 1) {
+		for (unsigned int y = rank - 1; y < size; y += cluster - 1) {
 			bool started = false;
 			unsigned int begin;
 			for (unsigned int x = 0; x < size; ++x) {
