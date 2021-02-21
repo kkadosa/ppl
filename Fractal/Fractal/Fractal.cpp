@@ -51,8 +51,10 @@ int main()
 	auto start = std::chrono::high_resolution_clock::now();
 
 	MPI::Init();
+	
 	int rank = MPI::COMM_WORLD.Get_rank();
 	int cluster = MPI::COMM_WORLD.Get_size();
+	std::cout << rank << " c" << std::endl;
 	const unsigned int size = 1000;
 	if (rank == 0) {
 		unsigned char* data = new unsigned char[size * size * 3];
