@@ -2,7 +2,6 @@
 #include <iostream>
 #include <chrono>
 #include <random>
-#include "Compact.h"
 
 void add(int*, int*, int*, MPI_Datatype*);
 void add(int* invec, int* inoutvec, int* len, MPI_Datatype* dtype) {
