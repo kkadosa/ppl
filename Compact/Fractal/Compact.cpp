@@ -3,9 +3,10 @@
 #include <chrono>
 #include <random>
 
-void add(int* invec, int* inoutvec, int* len, MPI_Datatype* dtype)
-{
+void add(int* invec, int* inoutvec, int* len, MPI_Datatype* dtype) {
+	std::cout << "1" << std::endl;
 	for (int i = 0; i < *len; i++) {
+		std::cout << invec[i] << std::endl;
 		inoutvec[i] += invec[i];
 	}
 }
