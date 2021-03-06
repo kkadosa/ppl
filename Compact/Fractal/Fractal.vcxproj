@@ -141,7 +141,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Fractal.cpp" />
+    <ClCompile Include="Compact.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Compact.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

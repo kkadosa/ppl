@@ -58,16 +58,17 @@ int main()
 	std::cout << "h" << std::endl;
 	std::vector<int> middle(size + extra);
 	MPI::COMM_WORLD.Gather(out.data(), chunk, MPI_INT32_T, middle.data(), chunk, MPI_INT32_T, 0);
+	MPI::Op* op = new MPI::Op();
+	std::cout << "j" << std::endl;
+	op->Init((MPI::User_function*)add, true);
+	std::cout << "k" << std::endl;
 	if (rank == 0) {
 		std::cout << "i" << std::endl;
 		std::vector<int> last(size + extra);
-		MPI::Op op;
-		std::cout << "j" << std::endl;
-		op.Init((MPI::User_function*) add, true);
-		std::cout << "k" << std::endl;
-		MPI::COMM_WORLD.Exscan(middle.data(), last.data(), middle.size(), MPI_INT32_T, op);
+		
+		MPI::COMM_WORLD.Exscan(middle.data(), last.data(), middle.size(), MPI_INT32_T, *op);
 		std::cout << "l" << std::endl;
-		op.Free();
+		op->Free();
 		std::cout << "m" << std::endl;
 		int result = last[last.size() - 1] + 1;
 		std::vector<int> compacted(result);
