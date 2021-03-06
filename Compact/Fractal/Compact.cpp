@@ -51,7 +51,8 @@ int main()
 	for (int i = 0; i < chunk; ++i) {
 		if (work[i] < barrier) {
 			out[i] = 1;
-		} else {
+		}
+		else {
 			out[i] = 0;
 		}
 	}
@@ -62,13 +63,14 @@ int main()
 	std::cout << "j" << std::endl;
 	op->Init((MPI::User_function*)add, true);
 	std::cout << "k" << std::endl;
+	std::cout << "i" << std::endl;
+	std::vector<int> last(size + extra);
+
+	MPI::COMM_WORLD.Exscan(middle.data(), last.data(), middle.size(), MPI_INT32_T, *op);
+	std::cout << "l" << std::endl;
+	op->Free();
+
 	if (rank == 0) {
-		std::cout << "i" << std::endl;
-		std::vector<int> last(size + extra);
-		
-		MPI::COMM_WORLD.Exscan(middle.data(), last.data(), middle.size(), MPI_INT32_T, *op);
-		std::cout << "l" << std::endl;
-		op->Free();
 		std::cout << "m" << std::endl;
 		int result = last[last.size() - 1] + 1;
 		std::vector<int> compacted(result);
