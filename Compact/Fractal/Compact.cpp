@@ -44,7 +44,6 @@ int main()
 		}
 	}
 	auto start = std::chrono::high_resolution_clock::now();
-	std::cout << "g" << std::endl;
 	std::vector<int> work(chunk);
 	MPI::COMM_WORLD.Scatter(vector.data(), chunk, MPI_INT32_T, work.data(), chunk, MPI_INT32_T, 0);
 	std::vector<int> out(chunk);
@@ -56,25 +55,22 @@ int main()
 			out[i] = 0;
 		}
 	}
-	std::cout << "h" << std::endl;
 	std::vector<int> middle(size + extra);
 	MPI::COMM_WORLD.Gather(out.data(), chunk, MPI_INT32_T, middle.data(), chunk, MPI_INT32_T, 0);
 	MPI::Op* op = new MPI::Op();
-	std::cout << "j" << std::endl;
 	op->Init((MPI::User_function*)add, true);
-	std::cout << "k" << std::endl;
-	std::cout << "i" << std::endl;
 	std::vector<int> last(size + extra);
 
 	MPI::COMM_WORLD.Exscan(middle.data(), last.data(), middle.size(), MPI_INT32_T, *op);
-	std::cout << "l" << std::endl;
 	op->Free();
 
 	if (rank == 0) {
 		std::cout << "m" << std::endl;
 		int result = last[last.size() - 1] + 1;
+		std::cout << "l" << std::endl;
 		std::vector<int> compacted(result);
 		for (int i = 0; i < last.size(); ++i) {
+			std::cout << i << std::endl;
 			if (middle[i]) {
 				compacted[last[i]] = vector[i];
 			}
