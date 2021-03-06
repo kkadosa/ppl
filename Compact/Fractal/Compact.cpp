@@ -2,7 +2,9 @@
 #include <iostream>
 #include <chrono>
 #include <random>
+#include "Compact.h"
 
+void add(int*, int*, int*, MPI_Datatype*);
 void add(int* invec, int* inoutvec, int* len, MPI_Datatype* dtype) {
 	std::cout << "1" << std::endl;
 	for (int i = 0; i < *len; i++) {
@@ -62,9 +64,9 @@ int main()
 		std::vector<int> last(size + extra);
 		MPI::Op op;
 		std::cout << "j" << std::endl;
-		op.Init((MPI::User_function*)add, true);
+		op.Init((MPI::User_function*) add, true);
 		std::cout << "k" << std::endl;
-		MPI::COMM_WORLD.Exscan(middle.data(), last.data(), size + extra, MPI_INT32_T, op);
+		MPI::COMM_WORLD.Exscan(middle.data(), last.data(), middle.size(), MPI_INT32_T, op);
 		std::cout << "l" << std::endl;
 		op.Free();
 		std::cout << "m" << std::endl;
