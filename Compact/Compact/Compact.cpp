@@ -17,7 +17,7 @@ int main()
 	std::cout << "f" << std::endl;
 	int rank = MPI::COMM_WORLD.Get_rank();
 	int cluster = MPI::COMM_WORLD.Get_size();
-	const unsigned int size = 10000;
+	const unsigned int size = 1000000;
 	const int vmax = 100;
 	const int barrier = 50;
 
@@ -42,7 +42,7 @@ int main()
 		}
 	}
 	auto start = std::chrono::high_resolution_clock::now();
-
+std::cout << "g" << std::endl;
 	std::vector<int> work(chunk);
 	MPI::COMM_WORLD.Scatter(vector.data(), size + extra, MPI_INT32_T, work.data(), chunk, MPI_INT32_T, 0);
 	std::vector<int> out(chunk);
@@ -53,9 +53,11 @@ int main()
 			out[i] = 0;
 		}
 	}
+	std::cout << "h" << std::endl;
 	std::vector<int> middle(size+extra);
 	MPI::COMM_WORLD.Gather(out.data(), chunk, MPI_INT32_T, middle.data(), size + extra, MPI_INT32_T, 0);
 	if (rank == 0) {
+		std::cout << "i" << std::endl;
 		std::vector<int> last(size + extra);
 		MPI::Op op;
 		op.Init((MPI::User_function*)add, true);
