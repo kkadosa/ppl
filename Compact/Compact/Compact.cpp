@@ -19,14 +19,14 @@ int main()
 	std::cout << "f" << std::endl;
 	int rank = MPI::COMM_WORLD.Get_rank();
 	int cluster = MPI::COMM_WORLD.Get_size();
-	const unsigned int size = 1000;
+	const unsigned int size = 10000;
 	const float vmax = 10;
 
 
 	std::vector<float> valuesV;
 	std::vector<int> columnV;
 	std::vector<int> rowV;
-	float vector[size];
+	float* vector = new float[size];
 
 	int sizes[3];
 	float* values;
@@ -38,7 +38,12 @@ int main()
 		std::mt19937 gen(rd());
 		std::uniform_real_distribution<float> val(0, vmax);
 		std::bernoulli_distribution dist(0.01);
-		float temp[size][size];
+
+		float** temp = new float*[size];
+		for (int j = 0; j < size; ++j) {
+			temp[j] = new float[size];
+		}
+
 		for (int i = 0; i < size; ++i) {
 			for (int j = 0; j < size; ++j) {
 				if (dist(gen)) {
@@ -69,6 +74,11 @@ int main()
 		values = valuesV.data();
 		column = columnV.data();
 		row = rowV.data();
+
+		for (int j = 0; j < size; ++j) {
+			delete[] temp[j];
+		}
+		delete[] temp;
 	}
 
 	//BEGIN
@@ -85,7 +95,7 @@ int main()
 	MPI::COMM_WORLD.Bcast(row, sizes[2], MPI_INT, 0);
 	MPI::COMM_WORLD.Bcast(vector, size, MPI_FLOAT, 0);
 
-	float result[size] = {};
+	float* result = new float[size];
 	for (int i = rank; i < size; i += cluster) {
 		float accumulator = 0;
 		int begin = row[i];
@@ -106,7 +116,7 @@ int main()
 	MPI::COMM_WORLD.Gather(result, size, MPI_FLOAT, receive, size, MPI_FLOAT, 0);
 
 	if (rank == 0) {
-		float out[size];
+		float* out = new float[size];
 		for (int i = 0; i < size; i += cluster) {
 			for (int j = 0; j < cluster && i + j < size; ++j) {
 				int index = j * size + i;
@@ -116,8 +126,12 @@ int main()
 		//END
 		auto end = std::chrono::high_resolution_clock::now();
 		std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms" << std::endl;
+		delete[] out;
 	}
 
+
+	delete[] vector;
+	delete[] result;
 	if (rank != 0) {
 		delete[] values;
 		delete[] column;
