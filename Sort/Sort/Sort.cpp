@@ -98,22 +98,23 @@ void mergesort(int* input, int size, int rank, int cluster) {
 			}
 			MPI::COMM_WORLD.Gatherv(mine, sizes[rank], MPI_INT, input, sizes, displacement, MPI_INT, 0);
 		} else {
+			std::cout << rank << " a" << std::endl;
 			for (int i = 0; i < threads; ++i) {
 				sizes[i] = prevsizes[2 * i] + prevsizes[2 * i + 1];
 			}
 			for (int i = threads; i < cluster; ++i) {
 				sizes[i] = 0;
 			}
-			std::cout << rank << " h" << std::endl;
 			displacement[0] = 0;
 			for (int i = 1; i < cluster; ++i) {
 				displacement[i] = displacement[i - 1] + sizes[i - 1];
 			}
-			if (sizes[rank] > 0)
+			if (sizes[rank] > 0) {
 				std::cout << rank << " g" << std::endl;
 				delete[] mine;
 				int* mine = new int[sizes[rank]];
 			}
+			std::cout << rank << " s" << std::endl;
 			MPI::COMM_WORLD.Scatterv(input, sizes, displacement, MPI_INT, mine, sizes[rank], MPI_INT, 0);
 			if (sizes[rank] > 0) {
 				std::cout << rank << " m" << std::endl;
