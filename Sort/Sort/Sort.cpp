@@ -129,7 +129,6 @@ void mergesort(int* input, int size, int rank, int cluster) {
 	}
 	delete[] displacement;
 	
-
 	if (rank == 0) {
 		std::cout << rank << " !!!!!!!" << std::endl;
 		if (threads == 3) {
@@ -143,7 +142,7 @@ void mergesort(int* input, int size, int rank, int cluster) {
 		std::cout << cluster << ", " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << ", ms" << std::endl;
 	}
 	std::cout << rank << " c" << std::endl;
-	delete[] mine;
+	//delete[] mine;
 	delete[] sizes;
 }
 
