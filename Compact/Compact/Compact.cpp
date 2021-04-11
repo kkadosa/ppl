@@ -18,7 +18,7 @@ int main()
 	MPI::Init();
 	std::cout << "f" << std::endl;
 	int rank = MPI::COMM_WORLD.Get_rank();
-	int cluster = 4;
+	int cluster = MPI::COMM_WORLD.Get_size();
 	const unsigned int size = 1500000;
 	const float vmax = 10;
 
@@ -82,16 +82,7 @@ int main()
 	}
 
 	//BEGIN
-	for (int i = 0; i < 80; ++i) {
-		if (i == 20) {
-			cluster = 8;
-		}
-		if (i == 40) {
-			cluster = 12;
-		}
-		if (i == 60) {
-			cluster = 16;
-		}
+	for (int i = 0; i < 20; ++i) {
 		auto start = std::chrono::high_resolution_clock::now();
 
 		MPI::COMM_WORLD.Bcast(sizes, 3, MPI_INT, 0);
