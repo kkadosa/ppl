@@ -115,25 +115,22 @@ void mergesort(int* input, int size, int rank, int cluster) {
 				delete[] mine;
 				int* mine = new int[sizes[rank]];
 				MPI::Intracomm comm = MPI::COMM_WORLD.Split(0, rank);
-				std::cout << rank << " s" << std::endl;
 				comm.Scatterv(input, sizes, displacement, MPI_INT, mine, sizes[rank], MPI_INT, 0);
-				std::cout << rank << " m" << std::endl;
 				merge(mine, 0, prevsizes[2 * rank] - 1, sizes[rank] - 1);
-				std::cout << rank << " u" << std::endl;
 				comm.Gatherv(mine, sizes[rank], MPI_INT, input, sizes, displacement, MPI_INT, 0);
-				std::cout << rank << " v" << std::endl;
 			} else {
 				MPI::COMM_WORLD.Split(MPI_UNDEFINED, rank);
-				std::cout << rank << " n" << std::endl;
 			}
-			std::cout << rank << " f" << std::endl;
 		}
 		prevthreads = threads;
 		threads = threads / 2;
+		std::cout << rank << " a" << std::endl;
 		delete[] prevsizes;
 		prevsizes = sizes;
 	}
+	std::cout << rank << " b" << std::endl;
 	delete[] displacement;
+	std::cout << rank << " c" << std::endl;
 	delete[] mine;
 
 	if (rank == 0) {
