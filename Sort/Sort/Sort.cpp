@@ -56,15 +56,20 @@ void mergesort(int* input, int size, int rank, int cluster) {
 		displacement[i] = displacement[i - 1] + sizes[i - 1];
 	}
 
+	std::cout << rank << " control" << std::endl;
+
 	int* mine = new int[sizes[rank]];
 	MPI::COMM_WORLD.Scatterv(input, sizes, displacement, MPI_INT, mine, sizes[rank], MPI_INT, 0);
 	sort(mine, 0, sizes[rank]);
 	MPI::COMM_WORLD.Gatherv(mine, sizes[rank], MPI_INT, input, sizes, displacement, MPI_INT, 0);
 
+	std::cout << rank << " first" << std::endl;
+
 	int prevthreads = cluster;
 	int threads = cluster / 2;
 	int* prevsizes = sizes;
 	while (threads > 3) {
+		std::cout << rank << " " << threads << "remaning" << std::endl;
 		delete[] mine;
 		sizes = new int[cluster];
 		displacement = new int[cluster];
