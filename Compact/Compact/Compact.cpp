@@ -43,7 +43,7 @@ int main()
 		for (int j = 0; j < size; ++j) {
 			temp[j] = new float[size];
 		}
-
+		std::cout << "g" << std::endl;
 		for (int i = 0; i < size; ++i) {
 			for (int j = 0; j < size; ++j) {
 				if (dist(gen)) {
@@ -53,6 +53,7 @@ int main()
 				}
 			}
 		}
+		std::cout << "h" << std::endl;
 		for (int j = 0; j < size; ++j) {
 				vector[j] = val(gen);
 		}
