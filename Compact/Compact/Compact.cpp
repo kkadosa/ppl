@@ -64,7 +64,7 @@ int main()
 	}
 
 	//BEGIN
-	
+	for (int i = 0; i < 40; ++i) {
 		auto start = std::chrono::high_resolution_clock::now();
 
 		MPI::COMM_WORLD.Bcast(sizes, 3, MPI_INT, 0);
@@ -108,7 +108,7 @@ int main()
 			}
 			//END
 			auto end = std::chrono::high_resolution_clock::now();
-			std::cout << cluster << ", " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
+			std::cout << cluster << ", " << i << ", " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
 			delete[] out;
 		}
 
@@ -123,7 +123,7 @@ int main()
 		else {
 			delete[] receive;
 		}
-	
+	}
 	MPI::Finalize();
 	return 0;
 }
