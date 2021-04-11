@@ -100,6 +100,7 @@ int main()
 		while (next < beginnings.size()) {
 			std::vector<int> buf(size * size);
 			MPI::COMM_WORLD.Recv(buf.data(), size * size, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, *status);
+			std::cout << "Prompt" << std::endl;
 			int tag = status->Get_tag();
 			if (tag == 0) {
 				std::cout << "Get good." << std::endl;
