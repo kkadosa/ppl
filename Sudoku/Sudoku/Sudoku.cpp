@@ -50,7 +50,7 @@ bool isSolved(std::vector<int> board) {
 	return true;
 }
 
-void solveBack(std::vector<int> board) {
+void solveBack(std::vector<int> &board) {
 	if (isSolved(board)) {
 		MPI::COMM_WORLD.Send(board.data(), size * size, MPI_INT, 0, 0);
 	} else {
@@ -58,7 +58,7 @@ void solveBack(std::vector<int> board) {
 			for (int j = 0; j < size; ++j) {
 				for (int k = 1; k <= size; ++k) {
 					if (isAllowed(board, i, j, k)) {
-						std::vector<int> t(board);
+						std::vector<int> &t(board);
 						t[i * size + j] = k;
 						solveBack(t);
 					}
