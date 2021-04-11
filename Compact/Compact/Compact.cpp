@@ -19,7 +19,7 @@ int main()
 	std::cout << "f" << std::endl;
 	int rank = MPI::COMM_WORLD.Get_rank();
 	int cluster = MPI::COMM_WORLD.Get_size();
-	const unsigned int size = 1000000;
+	const unsigned int size = 100000;
 	const float vmax = 10;
 
 
@@ -37,10 +37,11 @@ int main()
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		std::uniform_real_distribution<float> val(0, vmax);
-		std::bernoulli_distribution dist(0.01);
+		std::bernoulli_distribution dist(0.1);
 
 		std::cout << "g" << std::endl;
 		for (int i = 0; i < size; ++i) {
+			std::cout << i << std::endl;
 			rowV.push_back(valuesV.size());
 			for (int j = 0; j < size; ++j) {
 				if (dist(gen)) {
