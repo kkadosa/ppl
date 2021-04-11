@@ -59,9 +59,12 @@ void mergesort(int* input, int size, int rank, int cluster) {
 	std::cout << rank << " control" << std::endl;
 
 	int* mine = new int[sizes[rank]];
+	std::cout << rank << " w" << std::endl;
 	MPI::COMM_WORLD.Scatterv(input, sizes, displacement, MPI_INT, mine, sizes[rank], MPI_INT, 0);
+	std::cout << rank << " s" << std::endl;
 	sort(mine, 0, sizes[rank]);
 	MPI::COMM_WORLD.Gatherv(mine, sizes[rank], MPI_INT, input, sizes, displacement, MPI_INT, 0);
+	std::cout << rank << " g" << std::endl;
 
 	std::cout << rank << " first" << std::endl;
 
