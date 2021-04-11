@@ -142,12 +142,14 @@ int main()
 		MPI::Status *status = new MPI::Status();
 		while (run) {
 			MPI::COMM_WORLD.Send(nullptr, 0, MPI_INT, 0, 1);
-			std::cout << "A." << std::endl;
+			std::cout << rank << "A." << std::endl;
 			MPI::COMM_WORLD.Recv(work.data(), size * size, MPI_INT, 0, MPI_ANY_TAG, *status);
-			std::cout << "B." << std::endl;
+			std::cout << rank << "B." << std::endl;
 			int tag = status->Get_tag();
 			if (tag == 0) {
+				std::cout << rank << "S" << std::endl;
 				solveBack(work);
+				std::cout << rank << "V" << std::endl;
 			} else {
 				run = false;
 			}
