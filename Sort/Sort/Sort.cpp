@@ -80,7 +80,9 @@ void mergesort(int* input, int size, int rank, int cluster) {
 			for (int i = 1; i < cluster; ++i) {
 				displacement[i] = displacement[i - 1] + sizes[i - 1];
 			}
-			int* mine = new int[sizes[rank]];
+			if (sizes[rank] > 0) {
+				int* mine = new int[sizes[rank]];
+			}
 			MPI::COMM_WORLD.Scatterv(input, sizes, displacement, MPI_INT, mine, sizes[rank], MPI_INT, 0);
 			if (sizes[rank] > 0) {
 				if (rank == 0) {
@@ -102,7 +104,9 @@ void mergesort(int* input, int size, int rank, int cluster) {
 			for (int i = 1; i < cluster; ++i) {
 				displacement[i] = displacement[i - 1] + sizes[i - 1];
 			}
-			int* mine = new int[sizes[rank]];
+			if (sizes[rank] > 0) {
+				int* mine = new int[sizes[rank]];
+			}
 			MPI::COMM_WORLD.Scatterv(input, sizes, displacement, MPI_INT, mine, sizes[rank], MPI_INT, 0);
 			if (sizes[rank] > 0) {
 				merge(mine, 0, prevsizes[2 * rank] - 1, sizes[rank] - 1);
@@ -156,11 +160,11 @@ int main()
 	for (int i = 0; i < 40; ++i) {
 		mergesort(input, size1, rank, cluster);
 	}
-	delete[] input;
 
 	const unsigned int size2 = 100000000;
 
 	if (rank == 0) {
+		delete[] input;
 		input = new int[size2];
 		std::random_device rd;
 		std::mt19937 gen(rd());
@@ -174,7 +178,9 @@ int main()
 	for (int i = 0; i < 40; ++i) {
 		mergesort(input, size2, rank, cluster);
 	}
-	delete[] input;
+	if (rank == 0) {
+		delete[] input;
+	}
 	MPI::Finalize();
 	return 0;
 }
