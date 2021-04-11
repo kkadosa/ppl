@@ -93,7 +93,7 @@ int main()
 				}
 			}
 		}
-		std::cout << "First loop?" << std::endl;
+		std::cout << "First loop?" << beginnings.size() << std::endl;
 		int next = 0;
 		int done = 0;
 		MPI::Status* status = new MPI::Status();
@@ -142,7 +142,9 @@ int main()
 		MPI::Status *status = new MPI::Status();
 		while (run) {
 			MPI::COMM_WORLD.Send(nullptr, 0, MPI_INT, 0, 1);
+			std::cout << "A." << std::endl;
 			MPI::COMM_WORLD.Recv(work.data(), size * size, MPI_INT, 0, MPI_ANY_TAG, *status);
+			std::cout << "B." << std::endl;
 			int tag = status->Get_tag();
 			if (tag == 0) {
 				solveBack(work);
@@ -156,4 +158,3 @@ int main()
 	MPI::Finalize();
     return 0;
 }
-
