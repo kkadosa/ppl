@@ -141,7 +141,7 @@ void mergesort(int* input, int size, int rank, int cluster) {
 			merge(input, 0, sizes[0] - 1, size - 1);
 		}
 		auto end = std::chrono::high_resolution_clock::now();
-		std::cout << cluster << ", " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
+		std::cout << cluster << ", " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << ", ms" << std::endl;
 	}
 	delete[] sizes;
 }
