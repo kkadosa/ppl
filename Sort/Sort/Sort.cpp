@@ -58,6 +58,7 @@ void mergesort(int* input, int size, int rank, int cluster) {
 	displacement[0] = 0;
 	for (int i = 1; i < cluster; ++i) {
 		displacement[i] = displacement[i - 1] + sizes[i - 1];
+	}
 
 	int* mine = new int[sizes[rank]];
 	MPI::COMM_WORLD.Scatterv(input, sizes, displacement, MPI_INT, mine, sizes[rank], MPI_INT, 0);
@@ -70,10 +71,11 @@ void mergesort(int* input, int size, int rank, int cluster) {
 	while (threads > 3) {
 		std::cout << rank << " " << threads << "remaning" << std::endl;
 		delete[] mine;
+		std::cout << rank << " a" << std::endl;
 		sizes = new int[cluster];
-		std::cout << rank << "a" << std::endl;
+		std::cout << rank << " b" << std::endl;
 		displacement = new int[cluster];
-		std::cout << rank << "b" << std::endl;
+		std::cout << rank << " c" << std::endl;
 		if (prevthreads % 2 == 1) {
 			sizes[0] = prevsizes[0] + prevsizes[1] + prevsizes[2];
 			for (int i = 1; i < threads; ++i) {
@@ -100,7 +102,7 @@ void mergesort(int* input, int size, int rank, int cluster) {
 			}
 			MPI::COMM_WORLD.Gatherv(mine, sizes[rank], MPI_INT, input, sizes, displacement, MPI_INT, 0);
 		} else {
-			std::cout << rank << "c" << std::endl;
+			std::cout << rank << " d" << std::endl;
 			for (int i = 0; i < threads; ++i) {
 				sizes[i] = prevsizes[2 * i] + prevsizes[2 * i + 1];
 			}
@@ -114,10 +116,12 @@ void mergesort(int* input, int size, int rank, int cluster) {
 			if (sizes[rank] > 0) {
 				int* mine = new int[sizes[rank]];
 			}
+			std::cout << rank << " e" << std::endl;
 			MPI::COMM_WORLD.Scatterv(input, sizes, displacement, MPI_INT, mine, sizes[rank], MPI_INT, 0);
 			if (sizes[rank] > 0) {
 				merge(mine, 0, prevsizes[2 * rank] - 1, sizes[rank] - 1);
 			}
+			std::cout << rank << " f" << std::endl;
 			MPI::COMM_WORLD.Gatherv(mine, sizes[rank], MPI_INT, input, sizes, displacement, MPI_INT, 0);
 		}
 		prevthreads = threads;
@@ -167,7 +171,6 @@ int main()
 	}
 
 	for (int i = 0; i < 40; ++i) {
-		std::cout << rank << " begin1" << std::endl;
 		mergesort(input, size1, rank, cluster);
 	}
 
@@ -186,7 +189,6 @@ int main()
 	}
 
 	for (int i = 0; i < 40; ++i) {
-		std::cout << rank << " begin2" << std::endl;
 		mergesort(input, size2, rank, cluster);
 	}
 	if (rank == 0) {
