@@ -124,14 +124,11 @@ void mergesort(int* input, int size, int rank, int cluster) {
 		}
 		prevthreads = threads;
 		threads = threads / 2;
-		std::cout << rank << " a" << std::endl;
 		delete[] prevsizes;
 		prevsizes = sizes;
 	}
-	std::cout << rank << " b" << std::endl;
 	delete[] displacement;
-	std::cout << rank << " c" << std::endl;
-	delete[] mine;
+	
 
 	if (rank == 0) {
 		std::cout << rank << " !!!!!!!" << std::endl;
@@ -145,6 +142,8 @@ void mergesort(int* input, int size, int rank, int cluster) {
 		auto end = std::chrono::high_resolution_clock::now();
 		std::cout << cluster << ", " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << ", ms" << std::endl;
 	}
+	std::cout << rank << " c" << std::endl;
+	delete[] mine;
 	delete[] sizes;
 }
 
