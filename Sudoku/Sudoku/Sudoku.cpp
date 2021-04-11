@@ -59,7 +59,7 @@ void solveBack(std::vector<int> board) {
 	} else {
 		for (int i = 0; i < size; ++i) {
 			for (int j = 0; j < size; ++j) {
-				for (int k = 0; k < size; ++k) {
+				for (int k = 1; k <= size; ++k) {
 					if (isAllowed(board, i, j, k)) {
 						std::vector<int> t(board.begin(), board.end());
 						t[i * size + j] = k;
@@ -85,7 +85,7 @@ int main()
 	if (rank == 0) {
 		for (int i = 0; i < size; ++i) {
 			for (int j = 0; j < size; ++j) {
-				for (int k = 0; k < size; ++k) {
+				for (int k = 1; k <= size; ++k) {
 					if (isAllowed(initial, i, j, k)) {
 						std::vector<int> t(initial.begin(), initial.end());
 						t[i * size + j] = k;
