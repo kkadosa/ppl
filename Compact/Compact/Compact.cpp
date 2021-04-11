@@ -18,8 +18,8 @@ int main()
 	MPI::Init();
 	std::cout << "f" << std::endl;
 	int rank = MPI::COMM_WORLD.Get_rank();
-	int cluster = MPI::COMM_WORLD.Get_size();
-	const unsigned int size = 10000;
+	int cluster = 4;
+	const unsigned int size = 1500000;
 	const float vmax = 10;
 
 
@@ -82,62 +82,74 @@ int main()
 	}
 
 	//BEGIN
-	auto start = std::chrono::high_resolution_clock::now();
-
-	MPI::COMM_WORLD.Bcast(sizes, 3, MPI_INT, 0);
-	if (rank != 0) {
-		values = new float[sizes[0]];
-		column = new int[sizes[1]];
-		row = new int[sizes[2]];
-	}
-	MPI::COMM_WORLD.Bcast(values, sizes[0], MPI_FLOAT, 0);
-	MPI::COMM_WORLD.Bcast(column, sizes[1], MPI_INT, 0);
-	MPI::COMM_WORLD.Bcast(row, sizes[2], MPI_INT, 0);
-	MPI::COMM_WORLD.Bcast(vector, size, MPI_FLOAT, 0);
-
-	float* result = new float[size];
-	for (int i = rank; i < size; i += cluster) {
-		float accumulator = 0;
-		int begin = row[i];
-		int end = row[i + 1];
-		for (int j = begin; j < end; ++j) {
-			int left = values[j];
-			int right = vector[column[j]];
-			accumulator += left * right;
+	for (int i = 0; i < 80; ++i) {
+		if (i == 20) {
+			cluster = 8;
 		}
-		result[i] = accumulator;
-	}
-	
-	float* receive;
-	if (rank == 0) {
-		receive = new float[size*cluster];
-	}
+		if (i == 40) {
+			cluster = 12;
+		}
+		if (i == 60) {
+			cluster = 16;
+		}
+		auto start = std::chrono::high_resolution_clock::now();
 
-	MPI::COMM_WORLD.Gather(result, size, MPI_FLOAT, receive, size, MPI_FLOAT, 0);
+		MPI::COMM_WORLD.Bcast(sizes, 3, MPI_INT, 0);
+		if (rank != 0) {
+			values = new float[sizes[0]];
+			column = new int[sizes[1]];
+			row = new int[sizes[2]];
+		}
+		MPI::COMM_WORLD.Bcast(values, sizes[0], MPI_FLOAT, 0);
+		MPI::COMM_WORLD.Bcast(column, sizes[1], MPI_INT, 0);
+		MPI::COMM_WORLD.Bcast(row, sizes[2], MPI_INT, 0);
+		MPI::COMM_WORLD.Bcast(vector, size, MPI_FLOAT, 0);
 
-	if (rank == 0) {
-		float* out = new float[size];
-		for (int i = 0; i < size; i += cluster) {
-			for (int j = 0; j < cluster && i + j < size; ++j) {
-				int index = j * size + i;
-				out[i + j] = receive[index];
+		float* result = new float[size];
+		for (int i = rank; i < size; i += cluster) {
+			float accumulator = 0;
+			int begin = row[i];
+			int end = row[i + 1];
+			for (int j = begin; j < end; ++j) {
+				int left = values[j];
+				int right = vector[column[j]];
+				accumulator += left * right;
 			}
+			result[i] = accumulator;
 		}
-		//END
-		auto end = std::chrono::high_resolution_clock::now();
-		std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms" << std::endl;
-		delete[] out;
-	}
+
+		float* receive;
+		if (rank == 0) {
+			receive = new float[size * cluster];
+		}
+
+		MPI::COMM_WORLD.Gather(result, size, MPI_FLOAT, receive, size, MPI_FLOAT, 0);
+
+		if (rank == 0) {
+			float* out = new float[size];
+			for (int i = 0; i < size; i += cluster) {
+				for (int j = 0; j < cluster && i + j < size; ++j) {
+					int index = j * size + i;
+					out[i + j] = receive[index];
+				}
+			}
+			//END
+			auto end = std::chrono::high_resolution_clock::now();
+			std::cout << cluster << ", " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
+			delete[] out;
+		}
 
 
-	delete[] vector;
-	delete[] result;
-	if (rank != 0) {
-		delete[] values;
-		delete[] column;
-		delete[] row;
-	} else {
-		delete[] receive;
+		delete[] vector;
+		delete[] result;
+		if (rank != 0) {
+			delete[] values;
+			delete[] column;
+			delete[] row;
+		}
+		else {
+			delete[] receive;
+		}
 	}
 	MPI::Finalize();
 	return 0;
