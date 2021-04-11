@@ -93,10 +93,12 @@ int main()
 				}
 			}
 		}
+		std::cout << "First loop?" << std::endl;
 		int next = 0;
 		int done = 0;
 		MPI::Status* status = new MPI::Status();
 		while (next < beginnings.size()) {
+			std::cout << "Start." << std::endl;
 			std::vector<int> buf(size * size);
 			MPI::COMM_WORLD.Recv(buf.data(), size * size, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, *status);
 			int tag = status->Get_tag();
@@ -108,6 +110,7 @@ int main()
 		}
 		while (done < cluster -1) {
 			std::vector<int> buf(size * size);
+			std::cout << "Beginning of the end." << std::endl;
 			MPI::COMM_WORLD.Recv(buf.data(), size * size, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, *status);
 			int tag = status->Get_tag();
 			if (tag == 0) {
