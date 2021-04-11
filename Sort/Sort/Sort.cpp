@@ -147,7 +147,9 @@ int main()
 	int* input;
 
 	if (rank == 0) {
+		std::cout << "f1" << std::endl;
 		input = new int[size1];
+		std::cout << "f2" << std::endl;
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		std::uniform_int_distribution<int> val(0, vmax);
@@ -158,6 +160,7 @@ int main()
 	}
 
 	for (int i = 0; i < 40; ++i) {
+		std::cout << rank << " begin1" << std::endl;
 		mergesort(input, size1, rank, cluster);
 	}
 
@@ -176,6 +179,7 @@ int main()
 	}
 
 	for (int i = 0; i < 40; ++i) {
+		std::cout << rank << " begin2" << std::endl;
 		mergesort(input, size2, rank, cluster);
 	}
 	if (rank == 0) {
