@@ -98,13 +98,14 @@ int main()
 		int done = 0;
 		MPI::Status* status = new MPI::Status();
 		while (next < beginnings.size()) {
-			std::cout << "Start." << std::endl;
 			std::vector<int> buf(size * size);
 			MPI::COMM_WORLD.Recv(buf.data(), size * size, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, *status);
 			int tag = status->Get_tag();
 			if (tag == 0) {
+				std::cout << "Get good." << std::endl;
 				solutions.push_back(buf);
 			} else {
+				std::cout << "Send work." << std::endl;
 				MPI::COMM_WORLD.Send(beginnings[next++].data(), size * size, MPI_INT, status->Get_source(), 0);
 			}
 		}
