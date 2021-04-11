@@ -7,7 +7,7 @@
 void merge(int* input, int leftEnd, int middle, int rightEnd) {
 	int leftSize = middle - leftEnd + 1;
 	int rightSize = rightEnd - middle;
-
+	
 	int* left = new int[leftSize];
 	int* right = new int[rightSize];
 	for (int i = 0; i < leftSize; ++i) {
@@ -22,7 +22,8 @@ void merge(int* input, int leftEnd, int middle, int rightEnd) {
 	while (i < leftSize && j < rightSize) {
 		if (left[i] < right[j]) {
 			input[k++] = left[i++];
-		} else {
+		}
+		else {
 			input[k++] = right[j++];
 		}
 	}
@@ -70,7 +71,7 @@ void mergesort(int* input, int size, int rank, int cluster) {
 	int* prevsizes = sizes;
 	while (threads > 3) {
 		sizes = new int[cluster];
-		displacement = new int[cluster];
+		displacement = new int[threads];
 		if (prevthreads % 2 == 1) {
 			sizes[0] = prevsizes[0] + prevsizes[1] + prevsizes[2];
 			for (int i = 1; i < threads; ++i) {
@@ -80,23 +81,25 @@ void mergesort(int* input, int size, int rank, int cluster) {
 				sizes[i] = 0;
 			}
 			displacement[0] = 0;
-			for (int i = 1; i < cluster; ++i) {
+			for (int i = 1; i < threads; ++i) {
 				displacement[i] = displacement[i - 1] + sizes[i - 1];
 			}
 			if (sizes[rank] > 0) {
 				delete[] mine;
 				int* mine = new int[sizes[rank]];
-			}
-			MPI::COMM_WORLD.Scatterv(input, sizes, displacement, MPI_INT, mine, sizes[rank], MPI_INT, 0);
-			if (sizes[rank] > 0) {
+				MPI::Intracomm comm = MPI::COMM_WORLD.Split(0, rank);
+				comm.Scatterv(input, sizes, displacement, MPI_INT, mine, sizes[rank], MPI_INT, 0);
 				if (rank == 0) {
 					merge(mine, 0, prevsizes[0] - 1, prevsizes[0] + prevsizes[1] - 1);
 					merge(mine, 0, prevsizes[0] + prevsizes[1] - 1, prevsizes[0] + prevsizes[1] + prevsizes[2] - 1);
-				} else {
+				}
+				else {
 					merge(mine, 0, prevsizes[2 * rank + 1] - 1, sizes[rank] - 1);
 				}
+				comm.Gatherv(mine, sizes[rank], MPI_INT, input, sizes, displacement, MPI_INT, 0);
+			} else {
+				MPI::COMM_WORLD.Split(MPI_UNDEFINED, rank);
 			}
-			MPI::COMM_WORLD.Gatherv(mine, sizes[rank], MPI_INT, input, sizes, displacement, MPI_INT, 0);
 		} else {
 			for (int i = 0; i < threads; ++i) {
 				sizes[i] = prevsizes[2 * i] + prevsizes[2 * i + 1];
@@ -105,7 +108,7 @@ void mergesort(int* input, int size, int rank, int cluster) {
 				sizes[i] = 0;
 			}
 			displacement[0] = 0;
-			for (int i = 1; i < cluster; ++i) {
+			for (int i = 1; i < threads; ++i) {
 				displacement[i] = displacement[i - 1] + sizes[i - 1];
 			}
 			if (sizes[rank] > 0) {
@@ -116,12 +119,14 @@ void mergesort(int* input, int size, int rank, int cluster) {
 				comm.Scatterv(input, sizes, displacement, MPI_INT, mine, sizes[rank], MPI_INT, 0);
 				std::cout << rank << " m" << std::endl;
 				merge(mine, 0, prevsizes[2 * rank] - 1, sizes[rank] - 1);
+				std::cout << rank << " u" << std::endl;
+				comm.Gatherv(mine, sizes[rank], MPI_INT, input, sizes, displacement, MPI_INT, 0);
+				std::cout << rank << " v" << std::endl;
 			} else {
 				MPI::COMM_WORLD.Split(MPI_UNDEFINED, rank);
 				std::cout << rank << " n" << std::endl;
 			}
 			std::cout << rank << " f" << std::endl;
-			MPI::COMM_WORLD.Gatherv(mine, sizes[rank], MPI_INT, input, sizes, displacement, MPI_INT, 0);
 		}
 		prevthreads = threads;
 		threads = threads / 2;
@@ -132,10 +137,12 @@ void mergesort(int* input, int size, int rank, int cluster) {
 	delete[] mine;
 
 	if (rank == 0) {
+		std::cout << rank << " !!!!!!!" << std::endl;
 		if (threads == 3) {
 			merge(mine, 0, sizes[0] - 1, sizes[0] + sizes[1] - 1);
 			merge(mine, 0, sizes[0] + sizes[1] - 1, size - 1);
-		} else {
+		}
+		else {
 			merge(input, 0, sizes[0] - 1, size - 1);
 		}
 		auto end = std::chrono::high_resolution_clock::now();
