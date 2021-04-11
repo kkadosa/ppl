@@ -50,6 +50,10 @@ void mergesort(int* input, int size, int rank, int cluster) {
 	int base = size / cluster;
 	int boost = size - (base * (cluster - 1));
 	int* sizes = new int[cluster];
+	sizes[0] = boost;
+	for (int i = 1; i < cluster; ++i) {
+		sizes[i] = base;
+	}
 	int* displacement = new int[cluster];
 	displacement[0] = 0;
 	for (int i = 1; i < cluster; ++i) {
