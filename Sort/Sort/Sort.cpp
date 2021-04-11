@@ -104,11 +104,13 @@ void mergesort(int* input, int size, int rank, int cluster) {
 			for (int i = threads; i < cluster; ++i) {
 				sizes[i] = 0;
 			}
+			std::cout << rank << " h" << std::endl;
 			displacement[0] = 0;
 			for (int i = 1; i < cluster; ++i) {
 				displacement[i] = displacement[i - 1] + sizes[i - 1];
 			}
-			if (sizes[rank] > 0) {
+			if (sizes[rank] > 0)
+				std::cout << rank << " g" << std::endl;
 				delete[] mine;
 				int* mine = new int[sizes[rank]];
 			}
