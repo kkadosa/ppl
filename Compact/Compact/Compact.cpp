@@ -19,12 +19,12 @@ int main()
 	std::cout << "f" << std::endl;
 	int rank = MPI::COMM_WORLD.Get_rank();
 	int cluster = MPI::COMM_WORLD.Get_size();
-	const unsigned int size = 50000;
+	const unsigned int size = 10000;
 	const unsigned int fill = 10;
 	const float vmax = 10;
 
 
-	std::vector<float> valuesV(size*(size/fill + 1));
+	std::vector<float> valuesV(size * (size / fill + 1));
 	std::vector<int> columnV(size * (size / fill + 1));
 	std::vector<int> rowV(size + 1);
 	float* vector = new float[size];
