@@ -6,8 +6,8 @@
 
 #include "Solver.h"
 
-const int base = 3;
-const int size = 9;
+const int base = 2;
+const int size = 4;
 
 bool isAllowed(std::vector<int> board, int x, int y, int digit) {
 	bool allowed = true;
@@ -78,7 +78,7 @@ int main()
 	int rank = MPI::COMM_WORLD.Get_rank();
 	int cluster = MPI::COMM_WORLD.Get_size();
 
-	std::vector<int> initial = { 0,0,0,8,0,1,0,0,0,0,0,0,0,0,0,0,4,3,5,0,0,0,0,0,0,0,0,0,0,0,0,7,0,8,0,0,0,2,0,0,3,0,0,0,0,0,0,0,0,0,0,1,0,0,6,0,0,0,0,0,0,7,5,0,0,3,4,0,0,0,0,0,0,0,0,2,0,0,6,0,0 };
+	std::vector<int> initial = { 0,0,0,8,0,1,0,0,0, 0,0,0,0,0,0,0 };//, 4, 3, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 8, 0, 0, 0, 2, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 6, 0, 0, 0, 0, 0, 0, 7, 5, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 6, 0, 0};
 	std::vector<std::vector<int> > beginnings;
 	std::vector<std::vector<int> > solutions;
 
@@ -145,10 +145,9 @@ int main()
 			MPI::COMM_WORLD.Send(nullptr, 0, MPI_INT, 0, 1);
 			std::cout << rank << "A." << std::endl;
 			MPI::COMM_WORLD.Recv(work.data(), size * size, MPI_INT, 0, MPI_ANY_TAG, *status);
-			std::cout << rank << "B." << std::endl;
 			int tag = status->Get_tag();
 			if (tag == 0) {
-				std::cout << rank << "S";
+				std::cout << rank << " Work: ";
 				for (int i = 0; i < size * size; ++i) {
 					std::cout << work[i];
 				}
