@@ -114,8 +114,6 @@ int main()
 			delete[] out;
 		}
 
-
-		delete[] vector;
 		delete[] result;
 		if (rank != 0) {
 			delete[] values;
@@ -126,6 +124,7 @@ int main()
 			delete[] receive;
 		}
 	}
+	delete[] vector;
 	MPI::Finalize();
 	return 0;
 }
