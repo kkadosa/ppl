@@ -146,7 +146,7 @@ int main()
 		input = new int[size1];
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::uniform_real_distribution<int> val(0, vmax);
+		std::uniform_int_distribution<int> val(0, vmax);
 
 		for (int i = 0; i < size1; ++i) {
 			input[i] = val(gen);
@@ -165,7 +165,7 @@ int main()
 		input = new int[size2];
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::uniform_real_distribution<int> val(0, vmax);
+		std::uniform_int_distribution<int> val(0, vmax);
 
 		for (int i = 0; i < size2; ++i) {
 			input[i] = val(gen);
