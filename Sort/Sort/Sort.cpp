@@ -159,7 +159,6 @@ int main()
 	delete[] input;
 
 	const unsigned int size2 = 100000000;
-	const int vmax = 256;
 
 	if (rank == 0) {
 		input = new int[size2];
