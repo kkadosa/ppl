@@ -86,7 +86,7 @@ int main()
 			for (int j = 0; j < size; ++j) {
 				for (int k = 1; k <= size; ++k) {
 					if (isAllowed(initial, i, j, k)) {
-						std::vector<int> t(initial.begin(), initial.end());
+						std::vector<int> t(initial);
 						t[i * size + j] = k;
 						beginnings.push_back(t);
 					}
