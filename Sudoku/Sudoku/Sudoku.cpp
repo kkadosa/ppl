@@ -42,12 +42,9 @@ bool isAllowed(std::vector<int> board, int x, int y, int digit) {
 }
 
 bool isSolved(std::vector<int> board) {
-	std::cout << size << std::endl;
-	for (int i = 0; i < size; ++i) {
-		for (int j = 0; j < size; ++j) {
-			if (board[i * size + j] == 0) {
-				return false;
-			}
+	for (int i = 0; i < size * size; ++i) {
+		if (board[i] == 0) {
+			return false;
 		}
 	}
 	return true;
