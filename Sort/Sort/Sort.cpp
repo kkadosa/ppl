@@ -86,7 +86,7 @@ void mergesort(int* input, int size, int rank, int cluster) {
 			}
 			if (sizes[rank] > 0) {
 				delete[] mine;
-				int* mine = new int[sizes[rank]];
+				mine = new int[sizes[rank]];
 				MPI::Intracomm comm = MPI::COMM_WORLD.Split(0, rank);
 				comm.Scatterv(input, sizes, displacement, MPI_INT, mine, sizes[rank], MPI_INT, 0);
 				if (rank == 0) {
@@ -113,7 +113,7 @@ void mergesort(int* input, int size, int rank, int cluster) {
 			}
 			if (sizes[rank] > 0) {
 				delete[] mine;
-				int* mine = new int[sizes[rank]];
+				mine = new int[sizes[rank]];
 				MPI::Intracomm comm = MPI::COMM_WORLD.Split(0, rank);
 				comm.Scatterv(input, sizes, displacement, MPI_INT, mine, sizes[rank], MPI_INT, 0);
 				merge(mine, 0, prevsizes[2 * rank] - 1, sizes[rank] - 1);
@@ -130,7 +130,6 @@ void mergesort(int* input, int size, int rank, int cluster) {
 	delete[] displacement;
 	
 	if (rank == 0) {
-		std::cout << rank << " !!!!!!!" << std::endl;
 		if (threads == 3) {
 			merge(mine, 0, sizes[0] - 1, sizes[0] + sizes[1] - 1);
 			merge(mine, 0, sizes[0] + sizes[1] - 1, size - 1);
@@ -141,8 +140,7 @@ void mergesort(int* input, int size, int rank, int cluster) {
 		auto end = std::chrono::high_resolution_clock::now();
 		std::cout << cluster << ", " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << ", ms" << std::endl;
 	}
-	std::cout << rank << " c" << std::endl;
-	//delete[] mine;
+	delete[] mine;
 	delete[] sizes;
 }
 
