@@ -54,7 +54,6 @@ bool isSolved(std::vector<int> board) {
 
 void solveBack(std::vector<int> board) {
 	if (isSolved(board)) {
-		std::cout << "Home" << std::endl;
 		MPI::COMM_WORLD.Send(board.data(), size * size, MPI_INT, 0, 0);
 	} else {
 		for (int i = 0; i < size; ++i) {
@@ -94,26 +93,21 @@ int main()
 				}
 			}
 		}
-		std::cout << "First loop?" << beginnings.size() << std::endl;
 		int next = 0;
 		int done = 0;
 		MPI::Status* status = new MPI::Status();
 		while (next < beginnings.size()) {
 			std::vector<int> buf(size * size);
 			MPI::COMM_WORLD.Recv(buf.data(), size * size, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, *status);
-			std::cout << "Prompt" << std::endl;
 			int tag = status->Get_tag();
 			if (tag == 0) {
-				std::cout << "Get good." << std::endl;
 				solutions.push_back(buf);
 			} else {
-				std::cout << "Send work." << std::endl;
 				MPI::COMM_WORLD.Send(beginnings[next++].data(), size * size, MPI_INT, status->Get_source(), 0);
 			}
 		}
 		while (done < cluster -1) {
 			std::vector<int> buf(size * size);
-			std::cout << "Beginning of the end." << std::endl;
 			MPI::COMM_WORLD.Recv(buf.data(), size * size, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, *status);
 			int tag = status->Get_tag();
 			if (tag == 0) {
@@ -143,17 +137,14 @@ int main()
 		MPI::Status *status = new MPI::Status();
 		while (run) {
 			MPI::COMM_WORLD.Send(nullptr, 0, MPI_INT, 0, 1);
-			std::cout << rank << "A." << std::endl;
 			MPI::COMM_WORLD.Recv(work.data(), size * size, MPI_INT, 0, MPI_ANY_TAG, *status);
 			int tag = status->Get_tag();
 			if (tag == 0) {
-				std::cout << rank << " Work: ";
 				for (int i = 0; i < size * size; ++i) {
 					std::cout << work[i];
 				}
 				std::cout << std::endl;
 				solveBack(work);
-				std::cout << rank << "V" << std::endl;
 			} else {
 				run = false;
 			}
