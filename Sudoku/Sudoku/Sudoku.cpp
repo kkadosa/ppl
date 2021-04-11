@@ -140,11 +140,13 @@ int main()
 			MPI::COMM_WORLD.Recv(work.data(), size * size, MPI_INT, 0, MPI_ANY_TAG, *status);
 			int tag = status->Get_tag();
 			if (tag == 0) {
+				std::cout << "Work for " << rank << ": ";
 				for (int i = 0; i < size * size; ++i) {
 					std::cout << work[i];
 				}
 				std::cout << std::endl;
 				solveBack(work);
+				std::cout << "Work done " << rank << std::endl;
 			} else {
 				run = false;
 			}
