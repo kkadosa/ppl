@@ -52,8 +52,12 @@ bool isSolved(std::vector<int> board) {
 	return true;
 }
 
-void solveBack(std::vector<int> board) {
+void solveBack(std::vector<int> board, int depth) {
+	if (depth < 5) {
+		std::cout << "15?:" << std::endl;
+	}
 	if (isSolved(board)) {
+		std::cout << "Home" << std::endl;
 		MPI::COMM_WORLD.Send(board.data(), size * size, MPI_INT, 0, 0);
 	} else {
 		for (int i = 0; i < size; ++i) {
@@ -62,7 +66,7 @@ void solveBack(std::vector<int> board) {
 					if (isAllowed(board, i, j, k)) {
 						std::vector<int> t(board);
 						t[i * size + j] = k;
-						solveBack(t);
+						solveBack(t, depth + 1);
 					}
 				}
 			}
@@ -148,7 +152,7 @@ int main()
 			int tag = status->Get_tag();
 			if (tag == 0) {
 				std::cout << rank << "S" << std::endl;
-				solveBack(work);
+				solveBack(work, 0);
 				std::cout << rank << "V" << std::endl;
 			} else {
 				run = false;
