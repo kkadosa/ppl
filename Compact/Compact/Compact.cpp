@@ -19,7 +19,7 @@ int main()
 	std::cout << "f" << std::endl;
 	int rank = MPI::COMM_WORLD.Get_rank();
 	int cluster = MPI::COMM_WORLD.Get_size();
-	const unsigned int size = 1500000;
+	const unsigned int size = 100000;
 	const float vmax = 10;
 
 
@@ -82,7 +82,7 @@ int main()
 	}
 
 	//BEGIN
-	for (int i = 0; i < 20; ++i) {
+	
 		auto start = std::chrono::high_resolution_clock::now();
 
 		MPI::COMM_WORLD.Bcast(sizes, 3, MPI_INT, 0);
@@ -141,7 +141,7 @@ int main()
 		else {
 			delete[] receive;
 		}
-	}
+	
 	MPI::Finalize();
 	return 0;
 }
