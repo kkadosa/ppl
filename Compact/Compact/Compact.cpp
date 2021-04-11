@@ -19,7 +19,7 @@ int main()
 	std::cout << "f" << std::endl;
 	int rank = MPI::COMM_WORLD.Get_rank();
 	int cluster = MPI::COMM_WORLD.Get_size();
-	const unsigned int size = 100000;
+	const unsigned int size = 1000000;
 	const float vmax = 10;
 
 
@@ -39,33 +39,19 @@ int main()
 		std::uniform_real_distribution<float> val(0, vmax);
 		std::bernoulli_distribution dist(0.01);
 
-		float** temp = new float*[size];
-		for (int j = 0; j < size; ++j) {
-			temp[j] = new float[size];
-		}
 		std::cout << "g" << std::endl;
 		for (int i = 0; i < size; ++i) {
+			rowV.push_back(valuesV.size());
 			for (int j = 0; j < size; ++j) {
 				if (dist(gen)) {
-					temp[i][j] = val(gen);
-				} else {
-					temp[i][j] = 0;
+					valuesV.push_back(val(gen));
+					columnV.push_back(i);
 				}
 			}
 		}
 		std::cout << "h" << std::endl;
 		for (int j = 0; j < size; ++j) {
 				vector[j] = val(gen);
-		}
-		for (int i = 0; i < size; ++i) {
-			rowV.push_back(valuesV.size());
-			for (int j = 0; j < size; ++j) {
-				float var = temp[i][j];
-				if (var != 0) {
-					valuesV.push_back(var);
-					columnV.push_back(i);
-				}
-			}
 		}
 		rowV.push_back(size);
 
@@ -75,11 +61,6 @@ int main()
 		values = valuesV.data();
 		column = columnV.data();
 		row = rowV.data();
-
-		for (int j = 0; j < size; ++j) {
-			delete[] temp[j];
-		}
-		delete[] temp;
 	}
 
 	//BEGIN
