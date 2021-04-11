@@ -3,7 +3,6 @@
 #include <iostream>
 #include <chrono>
 #include <random>
-#include "Sort.h"
 
 void merge(int* input, int leftEnd, int middle, int rightEnd) {
 	int leftSize = middle - leftEnd + 1;
