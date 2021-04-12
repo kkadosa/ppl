@@ -9,7 +9,7 @@
 const int base = 3;
 const int size = 9;
 
-bool isAllowed(std::vector<int> board, int x, int y, int digit) {
+bool isAllowed(const std::vector<int>& board, int x, int y, int digit) {
 	bool allowed = true;
 
 	if (board[y * size + x] != 0) {
@@ -41,7 +41,7 @@ bool isAllowed(std::vector<int> board, int x, int y, int digit) {
 	return allowed;
 }
 
-bool isSolved(std::vector<int> board) {
+bool isSolved(const std::vector<int>& board) {
 	for (int i = 0; i < size * size; ++i) {
 		if (board[i] == 0) {
 			return false;
@@ -50,7 +50,7 @@ bool isSolved(std::vector<int> board) {
 	return true;
 }
 
-void solveBack(std::vector<int> board) {
+void solveBack(const std::vector<int>& board) {
 	if (isSolved(board)) {
 		MPI::COMM_WORLD.Send(board.data(), size * size, MPI_INT, 0, 0);
 	} else {
@@ -58,10 +58,10 @@ void solveBack(std::vector<int> board) {
 			for (int j = 0; j < size; ++j) {
 				for (int k = 1; k <= size; ++k) {
 					if (isAllowed(board, i, j, k)) {
-						std::cout << k << "?" << std::endl;
+						//std::cout << k << "?" << std::endl;
 						std::vector<int> t(board);
 						t[i * size + j] = k;
-						std::cout << k << "!" << std::endl;
+						//std::cout << k << "!" << std::endl;
 						solveBack(t);
 					}
 				}
