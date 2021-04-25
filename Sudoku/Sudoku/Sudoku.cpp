@@ -17,7 +17,7 @@ bool isAllowed(const std::vector<int>& board, int x, int y, int digit) {
 	}
 
 	// Azonos sorban vagy oszlopban csak egy 'val' lehet
-	for (int i = 0; allowed && i < 9; ++i) {
+	for (int i = 0; allowed && i < size; ++i) {
 		if (board[y * size + i] == digit) {
 			allowed = false;
 		}
@@ -27,8 +27,8 @@ bool isAllowed(const std::vector<int>& board, int x, int y, int digit) {
 	}
 
 	// Az adott cellában csak egy 'val' lehet
-	int upperY = base * (y / base);
-	int leftX = base * (x / base);
+	int upperY = base * (int)(y / base);
+	int leftX = base * (int)(x / base);
 
 	for (int i = upperY; allowed && i < upperY + 3; ++i) {
 		for (int j = leftX; allowed && j < leftX + 3; ++j) {
@@ -54,13 +54,13 @@ void solveBack(const std::vector<int>& board) {
 	if (isSolved(board)) {
 		MPI::COMM_WORLD.Send(board.data(), size * size, MPI_INT, 0, 0);
 	} else {
-		for (int i = 0; i < size; ++i) {
-			for (int j = 0; j < size; ++j) {
-				for (int k = 1; k <= size; ++k) {
-					if (isAllowed(board, i, j, k)) {
+		for (int y = 0; y < size; ++y) {
+			for (int x = 1; x <= size; ++x) {
+				for (int k = 0; k < size; ++k) {
+					if (isAllowed(board, x, y, k)) {
 						//std::cout << k << "?" << std::endl;
 						std::vector<int> t(board);
-						t[i * size + j] = k;
+						t[y * size + k] = k;
 						//std::cout << k << "!" << std::endl;
 						solveBack(t);
 					}
