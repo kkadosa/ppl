@@ -12,6 +12,13 @@ const int size = 9;
 bool isAllowed(const std::vector<int>& board, int x, int y, int digit) {
 	bool allowed = true;
 
+	for (std::vector<int> solution : solutions) {
+		for (int i = 0; i < size * size; ++i) {
+			std::cout << solution[i];
+		}
+		std::cout << std::endl;
+	}
+
 	if (board[y * size + x] != 0) {
 		allowed = false;
 	}
