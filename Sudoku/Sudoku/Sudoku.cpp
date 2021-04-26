@@ -58,8 +58,8 @@ void solveBack(const std::vector<int>& board) {
 		int x, y;
 		for (int i = 0; go && i < size; ++i) {
 			for (int j = 0; go && j < size; ++j) {
-				if (board[y * size + x] == 0) {
-					y = j;
+				if (board[i * size + j] == 0) {
+					x = j;
 					y = i;
 					go = false;
 				}
