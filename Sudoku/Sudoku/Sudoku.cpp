@@ -6,8 +6,8 @@
 
 #include "Solver.h"
 
-const int base = 2;
-const int size = 4;
+const int base = 3;
+const int size = 9;
 
 bool isAllowed(const std::vector<int>& board, int x, int y, int digit) {
 	// Azonos sorban vagy oszlopban csak egy 'val' lehet
@@ -88,7 +88,7 @@ int main()
 	int rank = MPI::COMM_WORLD.Get_rank();
 	int cluster = MPI::COMM_WORLD.Get_size();
 
-	std::vector<int> initial(size*size, 0);// = { 0,0,0,8,0,1,0,0,0, 0,0,0,0,0,0,0 , 4, 3, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 8, 0, 0, 0, 2, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 6, 0, 0, 0, 0, 0, 0, 7, 5, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 6, 0, 0 };
+	std::vector<int> initial = { 0,0,0,8,0,1,0,0,0, 0,0,0,0,0,0,0 , 4, 3, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 8, 0, 0, 0, 2, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 6, 0, 0, 0, 0, 0, 0, 7, 5, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 6, 0, 0 };
 	std::vector<std::vector<int> > beginnings;
 	std::vector<std::vector<int> > solutions;
 
