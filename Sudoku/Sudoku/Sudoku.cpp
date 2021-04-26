@@ -46,12 +46,11 @@ bool isSolved(const std::vector<int>& board) {
 
 void solveBack(const std::vector<int>& board) {
 
-	/*
 	for (int i = 0; i < size * size; ++i) {
 		std::cout << board[i];
 	}
 	std::cout << std::endl;
-	*/
+	
 	if (isSolved(board)) {
 		std::cout << "SOLVED-------------------" << std::endl;
 		MPI::COMM_WORLD.Send(board.data(), size * size, MPI_INT, 0, 0);
