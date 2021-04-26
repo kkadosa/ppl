@@ -58,12 +58,12 @@ void solveBack(const std::vector<int>& board) {
 			for (int x = 0; x < size; ++x) {
 				for (int k = 1; k <= size; ++k) {
 					if (isAllowed(board, x, y, k)) {
-
+						/*
 						for (int i = 0; i < size * size; ++i) {
 							std::cout << board[i];
 						}
 						std::cout << std::endl;
-
+						*/
 						//std::cout << k << "?" << std::endl;
 						std::vector<int> t(board);
 						t[y * size + x] = k;
