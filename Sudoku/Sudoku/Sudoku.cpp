@@ -45,12 +45,12 @@ bool isSolved(const std::vector<int>& board) {
 }
 
 void solveBack(const std::vector<int>& board) {
-	/*
+	
 	for (int i = 0; i < size * size; ++i) {
 		std::cout << board[i];
 	}
 	std::cout << std::endl;
-	*/
+
 	if (isSolved(board)) {
 		MPI::COMM_WORLD.Send(board.data(), size * size, MPI_INT, 0, 0);
 	} else {
@@ -72,15 +72,12 @@ void solveBack(const std::vector<int>& board) {
 						for (int k : possibilities) {
 							std::vector<int> t(board);
 							t[y * size + x] = k;
-							std::cout << "down" << std::endl;
 							solveBack(t);
 						}
 					}
 				}
 			}
 		}
-
-		std::cout << "up" << std::endl;
 	}
 }
 
