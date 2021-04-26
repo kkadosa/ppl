@@ -28,8 +28,8 @@ bool isAllowed(const std::vector<int>& board, int x, int y, int digit) {
 	int upperY = base * (int)(y / base);
 	int leftX = base * (int)(x / base);
 
-	for (int i = upperY; i < upperY + 3; ++i) {
-		for (int j = leftX; j < leftX + 3; ++j) {
+	for (int i = upperY; i < upperY + base; ++i) {
+		for (int j = leftX; j < leftX + base; ++j) {
 			if (board[i * size + j] == digit) {
 				return false;
 			}
