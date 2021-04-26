@@ -55,29 +55,23 @@ void solveBack(const std::vector<int>& board) {
 		MPI::COMM_WORLD.Send(board.data(), size * size, MPI_INT, 0, 0);
 	} else {
 		bool go = true;
-		for (int y = 0; go && y < size; ++y) {
-			for (int x = 0; go && x < size; ++x) {
+		int x, y;
+		for (int i = 0; go && i < size; ++i) {
+			for (int j = 0; go && j < size; ++j) {
 				if (board[y * size + x] == 0) {
-					std::vector<int> possibilities;
-
-					for (int k = 1; k <= size; ++k) {
-						if (isAllowed(board, x, y, k)) {
-							possibilities.push_back(k);
-						}
-					}
-
-					if (possibilities.empty()) {
-						go = false;
-						std::cout << "up" << std::endl;
-					} else {
-						for (int k : possibilities) {
-							std::vector<int> t(board);
-							std::cout << y << " " << x <<" " <<  k << std::endl;
-							t[y * size + x] = k;
-							solveBack(t);
-						}
-					}
+					y = j;
+					y = i;
+					go = false;
 				}
+			}
+		}
+
+		for (int k = 1; k <= size; ++k) {
+			if (isAllowed(board, x, y, k)) {
+				std::vector<int> t(board);
+				//std::cout << y << " " << x << " " << k << std::endl;
+				t[y * size + x] = k;
+				solveBack(t);
 			}
 		}
 	}
