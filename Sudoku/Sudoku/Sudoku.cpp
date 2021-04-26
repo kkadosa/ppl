@@ -10,19 +10,17 @@ const int base = 3;
 const int size = 9;
 
 bool isAllowed(const std::vector<int>& board, int x, int y, int digit) {
-	bool allowed = true;
-	
 	if (board[y * size + x] != 0) { 
-		allowed = false;
+		return false;
 	}
 
 	// Azonos sorban vagy oszlopban csak egy 'val' lehet
-	for (int i = 0; allowed && i < size; ++i) {
+	for (int i = 0; i < size; ++i) {
 		if (board[y * size + i] == digit) {
-			allowed = false;
+			return false;
 		}
 		if (board[i*size+x] == digit) {
-			allowed = false;
+			return false;
 		}
 	}
 
@@ -30,15 +28,15 @@ bool isAllowed(const std::vector<int>& board, int x, int y, int digit) {
 	int upperY = base * (int)(y / base);
 	int leftX = base * (int)(x / base);
 
-	for (int i = upperY; allowed && i < upperY + 3; ++i) {
-		for (int j = leftX; allowed && j < leftX + 3; ++j) {
+	for (int i = upperY; i < upperY + 3; ++i) {
+		for (int j = leftX; j < leftX + 3; ++j) {
 			if (board[i * size + j] == digit) {
-				allowed = false;
+				return false;
 			}
 		}
 	}
 
-	return allowed;
+	return true;
 }
 
 bool isSolved(const std::vector<int>& board) {
@@ -54,20 +52,28 @@ void solveBack(const std::vector<int>& board) {
 	if (isSolved(board)) {
 		MPI::COMM_WORLD.Send(board.data(), size * size, MPI_INT, 0, 0);
 	} else {
-		for (int y = 0; y < size; ++y) {
-			for (int x = 0; x < size; ++x) {
+		bool go = true;
+		for (int y = 0; go && y < size; ++y) {
+			for (int x = 0; go && x < size; ++x) {
+				std::vector<int> possibilities(10);
+
 				for (int k = 1; k <= size; ++k) {
 					if (isAllowed(board, x, y, k)) {
-						/*
-						for (int i = 0; i < size * size; ++i) {
-							std::cout << board[i];
-						}
-						std::cout << std::endl;
-						*/
-						//std::cout << k << "?" << std::endl;
+						possibilities.push_back(k);
+					}
+				}
+				if (possibilities.empty()) {
+					go = false;
+				} else {
+
+					for (int i = 0; i < size * size; ++i) {
+						std::cout << board[i];
+					}
+					std::cout << std::endl;
+
+					for (int k : possibilities) {
 						std::vector<int> t(board);
 						t[y * size + x] = k;
-						//std::cout << k << "!" << std::endl;
 						solveBack(t);
 					}
 				}
