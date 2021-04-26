@@ -71,7 +71,7 @@ void solveBack(const std::vector<int>& board) {
 					} else {
 						for (int k : possibilities) {
 							std::vector<int> t(board);
-							t.at(y * size + x) = k;
+							t[y * size + x] = k;
 							solveBack(t);
 						}
 					}
