@@ -58,7 +58,7 @@ void solveBack(const std::vector<int>& board) {
 		bool go = true;
 		for (int y = 0; go && y < size; ++y) {
 			for (int x = 0; go && x < size; ++x) {
-				if (board[y * size + x] != 0) {
+				if (board[y * size + x] == 0) {
 					std::vector<int> possibilities;
 
 					for (int k = 1; k <= size; ++k) {
@@ -66,10 +66,10 @@ void solveBack(const std::vector<int>& board) {
 							possibilities.push_back(k);
 						}
 					}
+
 					if (possibilities.empty()) {
 						go = false;
-					}
-					else {
+					} else {
 						for (int k : possibilities) {
 							std::vector<int> t(board);
 							t.at(y * size + x) = k;
