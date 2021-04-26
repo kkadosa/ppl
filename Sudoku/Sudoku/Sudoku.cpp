@@ -6,8 +6,8 @@
 
 #include "Solver.h"
 
-const int base = 3;
-const int size = 9;
+const int base = 2;
+const int size = 4;
 
 bool isAllowed(const std::vector<int>& board, int x, int y, int digit) {
 	if (board[y * size + x] != 0) { 
@@ -57,6 +57,7 @@ void solveBack(const std::vector<int>& board) {
 	std::cout << std::endl;
 	*/
 	if (isSolved(board)) {
+		std::cout << "SOLVED-------------------" << std::endl;
 		MPI::COMM_WORLD.Send(board.data(), size * size, MPI_INT, 0, 0);
 	} else {
 		bool go = true;
