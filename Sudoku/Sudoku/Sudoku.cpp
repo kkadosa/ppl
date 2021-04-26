@@ -10,10 +10,6 @@ const int base = 2;
 const int size = 4;
 
 bool isAllowed(const std::vector<int>& board, int x, int y, int digit) {
-	if (board[y * size + x] != 0) { 
-		return false;
-	}
-
 	// Azonos sorban vagy oszlopban csak egy 'val' lehet
 	for (int i = 0; i < size; ++i) {
 		if (board[y * size + i] == digit) {
@@ -63,20 +59,23 @@ void solveBack(const std::vector<int>& board) {
 		bool go = true;
 		for (int y = 0; go && y < size; ++y) {
 			for (int x = 0; go && x < size; ++x) {
-				std::vector<int> possibilities;
+				if (board[y * size + x] != 0) {
+					std::vector<int> possibilities;
 
-				for (int k = 1; k <= size; ++k) {
-					if (isAllowed(board, x, y, k)) {
-						possibilities.push_back(k);
+					for (int k = 1; k <= size; ++k) {
+						if (isAllowed(board, x, y, k)) {
+							possibilities.push_back(k);
+						}
 					}
-				}
-				if (possibilities.empty()) {
-					go = false;
-				} else {
-					for (int k : possibilities) {
-						std::vector<int> t(board);
-						t.at(y * size + x) = k;
-						solveBack(t);
+					if (possibilities.empty()) {
+						go = false;
+					}
+					else {
+						for (int k : possibilities) {
+							std::vector<int> t(board);
+							t.at(y * size + x) = k;
+							solveBack(t);
+						}
 					}
 				}
 			}
