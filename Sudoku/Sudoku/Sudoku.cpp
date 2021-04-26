@@ -68,10 +68,11 @@ void solveBack(const std::vector<int>& board) {
 
 					if (possibilities.empty()) {
 						go = false;
-						std::cout << "asdfajshdflkahsldkfjhlashdf" << std::endl;
+						std::cout << "up" << std::endl;
 					} else {
 						for (int k : possibilities) {
 							std::vector<int> t(board);
+							std::cout << k << std::endl;
 							t[y * size + x] = k;
 							solveBack(t);
 						}
