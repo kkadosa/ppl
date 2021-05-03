@@ -151,27 +151,9 @@ int main()
 	int rank = MPI::COMM_WORLD.Get_rank();
 	int cluster = MPI::COMM_WORLD.Get_size();
 
-	const unsigned int size1 = 1000000;
 	const int vmax = 256;
 
 	int* input;
-
-	if (rank == 0) {
-		std::cout << "f1" << std::endl;
-		input = new int[size1];
-		std::cout << "f2" << std::endl;
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		std::uniform_int_distribution<int> val(0, vmax);
-
-		for (int i = 0; i < size1; ++i) {
-			input[i] = val(gen);
-		}
-	}
-
-	for (int i = 0; i < 40; ++i) {
-		mergesort(input, size1, rank, cluster);
-	}
 
 	const unsigned int size2 = 100000000;
 
