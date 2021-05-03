@@ -19,7 +19,7 @@ int main()
 	std::cout << "f" << std::endl;
 	int rank = MPI::COMM_WORLD.Get_rank();
 	int cluster = MPI::COMM_WORLD.Get_size();
-	const unsigned int size = 25000;
+	const unsigned int size = 20000;
 	const unsigned int fill = 10;
 	const float vmax = 128;
 
@@ -42,7 +42,6 @@ int main()
 
 		std::cout << "g" << std::endl;
 		for (int i = 0; i < size; ++i) {
-			std::cout << i << std::endl;
 			rowV.push_back(valuesV.size());
 			for (int j = 0; j < size; ++j) {
 				if (j % fill == 0) {
