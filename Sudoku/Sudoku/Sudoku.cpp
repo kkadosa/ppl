@@ -97,6 +97,7 @@ int main()
 		int next = 0;
 		int done = 0;
 		MPI::Status* status = new MPI::Status();
+		std::cout << beginnings.size() << std::endl;
 		while (next < beginnings.size()) {
 			std::vector<int> buf(size * size);
 			MPI::COMM_WORLD.Recv(buf.data(), size * size, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, *status);
