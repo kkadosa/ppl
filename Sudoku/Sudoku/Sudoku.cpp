@@ -1,4 +1,4 @@
-
+ï»¿
 #include "mpi.h"
 #include <iostream>
 #include <chrono>
@@ -20,7 +20,7 @@ bool isAllowed(const std::vector<int>& board, int x, int y, int digit) {
 		}
 	}
 
-	// Az adott cellában csak egy 'val' lehet
+	// Az adott cellï¿½ban csak egy 'val' lehet
 	int upperY = base * (int)(y / base);
 	int leftX = base * (int)(x / base);
 
@@ -75,28 +75,23 @@ int main()
 	int rank = MPI::COMM_WORLD.Get_rank();
 	int cluster = MPI::COMM_WORLD.Get_size();
 
-	std::vector<int> initial = { 0,0,0,8,0,1,0,0,0, 0,0,0,0,0,0,0 , 4, 3, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 8, 0, 0, 0, 2, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	std::vector<int> initial = { 0,0,0,8,0,1,0,0,0, 0,0,0,0,0,0,0 , 4, 3, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 8, 0, 0, 0, 2, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 6, 0, 0, 0, 0, 0, 0, 7, 5, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 6, 0, 0 };
 	std::vector<std::vector<int> > beginnings;
 	std::vector<std::vector<int> > solutions;
 
 	if (rank == 0) {
-		int found = 0;
-		for (int i = 0; i < size && found < cluster * 3; ++i) {
-			for (int j = 0; j < size && found < cluster * 3; ++j) {
-				for (int k = 1; k <= size && found < cluster * 3; ++k) {
+		auto start = std::chrono::high_resolution_clock::now();
+		for (int i = 0; i < size; ++i) {
+			for (int j = 0; j < size; ++j) {
+				for (int k = 1; k <= size; ++k) {
 					if (isAllowed(initial, j, i, k)) {
 						std::vector<int> t(initial);
 						t[i * size + j] = k;
 						beginnings.push_back(t);
-						++found;
 					}
 				}
 			}
 		}
-	}
-
-	if (rank == 0) {
-		auto start = std::chrono::high_resolution_clock::now();
 		int next = 0;
 		int done = 0;
 		MPI::Status* status = new MPI::Status();
@@ -124,7 +119,7 @@ int main()
 			}
 		}
 		delete status;
-		/*
+
 		if (solutions.empty()) {
 			std::cout << "No solutions found." << std::endl;
 		}
@@ -137,7 +132,6 @@ int main()
 				std::cout << std::endl;
 			}
 		}
-		*/
 
 		auto end = std::chrono::high_resolution_clock::now();
 		std::cout << cluster << ", " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << ", ms" << std::endl;
@@ -164,7 +158,6 @@ int main()
 			}
 		}
 		delete status;
-
 	}
 
 	MPI::Finalize();
