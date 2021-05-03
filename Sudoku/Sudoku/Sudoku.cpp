@@ -81,13 +81,15 @@ int main()
 
 	if (rank == 0) {
 		auto start = std::chrono::high_resolution_clock::now();
-		for (int i = 0; i < size; ++i) {
-			for (int j = 0; j < size; ++j) {
-				for (int k = 1; k <= size; ++k) {
+		int found = 0;
+		for (int i = 0; i < size && found < cluster * 3; ++i) {
+			for (int j = 0; j < size && found < cluster * 3; ++j) {
+				for (int k = 1; k <= size && found < cluster * 3; ++k) {
 					if (isAllowed(initial, j, i, k)) {
 						std::vector<int> t(initial);
 						t[i * size + j] = k;
 						beginnings.push_back(t);
+						++found;
 					}
 				}
 			}
