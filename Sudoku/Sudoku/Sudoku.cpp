@@ -92,65 +92,79 @@ int main()
 				}
 			}
 		}
-		int next = 0;
-		int done = 0;
-		MPI::Status* status = new MPI::Status();
-		while (next < beginnings.size()) {
-			std::vector<int> buf(size * size);
-			MPI::COMM_WORLD.Recv(buf.data(), size * size, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, *status);
-			int tag = status->Get_tag();
-			if (tag == 0) {
-				solutions.push_back(buf);
-			} else {
-				MPI::COMM_WORLD.Send(beginnings[next++].data(), size * size, MPI_INT, status->Get_source(), 0);
-			}
-		}
-		while (done < cluster -1) {
-			std::vector<int> buf(size * size);
-			MPI::COMM_WORLD.Recv(buf.data(), size * size, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, *status);
-			int tag = status->Get_tag();
-			if (tag == 0) {
-				solutions.push_back(buf);
-			} else {
-				MPI::COMM_WORLD.Send(nullptr, 0, MPI_INT, status->Get_source(), 1);
-				++done;
-			}
-		}
-		delete status;
+	}
 
-		if (solutions.empty()) {
-			std::cout << "No solutions found." << std::endl;
-		} else {
-			std::cout << "Solutions: ";
-			for (std::vector<int> solution : solutions) {
-				for (int i = 0; i < size * size; ++i) {
-					std::cout << solution[i];
+	for (int l = 0; l < 40; ++l) {
+		if (rank == 0) {
+			auto start = std::chrono::high_resolution_clock::now();
+			int next = 0;
+			int done = 0;
+			MPI::Status* status = new MPI::Status();
+			while (next < beginnings.size()) {
+				std::vector<int> buf(size * size);
+				MPI::COMM_WORLD.Recv(buf.data(), size * size, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, *status);
+				int tag = status->Get_tag();
+				if (tag == 0) {
+					solutions.push_back(buf);
 				}
-				std::cout << std::endl;
-			}
-		}
-		
-	} else {
-		std::vector<int> work(size*size);
-		bool run = true;
-		MPI::Status *status = new MPI::Status();
-		while (run) {
-			MPI::COMM_WORLD.Send(nullptr, 0, MPI_INT, 0, 1);
-			MPI::COMM_WORLD.Recv(work.data(), size * size, MPI_INT, 0, MPI_ANY_TAG, *status);
-			int tag = status->Get_tag();
-			if (tag == 0) {
-				std::cout << "Work for " << rank << ": ";
-				for (int i = 0; i < size * size; ++i) {
-					std::cout << work[i];
+				else {
+					MPI::COMM_WORLD.Send(beginnings[next++].data(), size * size, MPI_INT, status->Get_source(), 0);
 				}
-				std::cout << std::endl;
-				solveBack(work);
-				std::cout << "Work done " << rank << std::endl;
-			} else {
-				run = false;
 			}
+			while (done < cluster - 1) {
+				std::vector<int> buf(size * size);
+				MPI::COMM_WORLD.Recv(buf.data(), size * size, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, *status);
+				int tag = status->Get_tag();
+				if (tag == 0) {
+					solutions.push_back(buf);
+				}
+				else {
+					MPI::COMM_WORLD.Send(nullptr, 0, MPI_INT, status->Get_source(), 1);
+					++done;
+				}
+			}
+			delete status;
+			/*
+			if (solutions.empty()) {
+				std::cout << "No solutions found." << std::endl;
+			}
+			else {
+				std::cout << "Solutions: ";
+				for (std::vector<int> solution : solutions) {
+					for (int i = 0; i < size * size; ++i) {
+						std::cout << solution[i];
+					}
+					std::cout << std::endl;
+				}
+			}
+			*/
+
+			auto end = std::chrono::high_resolution_clock::now();
+			std::cout << cluster << ", " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << ", ms" << std::endl;
 		}
-		delete status;
+		else {
+			std::vector<int> work(size * size);
+			bool run = true;
+			MPI::Status* status = new MPI::Status();
+			while (run) {
+				MPI::COMM_WORLD.Send(nullptr, 0, MPI_INT, 0, 1);
+				MPI::COMM_WORLD.Recv(work.data(), size * size, MPI_INT, 0, MPI_ANY_TAG, *status);
+				int tag = status->Get_tag();
+				if (tag == 0) {
+					std::cout << "Work for " << rank << ": ";
+					for (int i = 0; i < size * size; ++i) {
+						std::cout << work[i];
+					}
+					std::cout << std::endl;
+					solveBack(work);
+					std::cout << "Work done " << rank << std::endl;
+				}
+				else {
+					run = false;
+				}
+			}
+			delete status;
+		}
 	}
 
 	MPI::Finalize();
