@@ -134,7 +134,7 @@ int main()
 			if (l == 0) {
 				savePNG(dftName, width, width, image);
 			}
-			std::cout << "DFT finished" << std::endl;
+			//std::cout << "DFT finished" << std::endl;
 		}
 
 		MPI::COMM_WORLD.Scatter(full1.data(), sendn, LINE, in.data(), sendn, LINE, 0);
@@ -152,7 +152,7 @@ int main()
 			if (l == 0) {
 				savePNG(outName, width, width, image);
 			}
-			std::cout << "IDFT finished" << std::endl;
+			//std::cout << "IDFT finished" << std::endl;
 		}
 
 		if (rank == 0) {
