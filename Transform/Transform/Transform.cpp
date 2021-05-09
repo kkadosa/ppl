@@ -149,6 +149,7 @@ int main()
 
 		MPI::COMM_WORLD.Scatter(full1.data(), sendn, LINE, in.data(), sendn, LINE, 0);
 		transform(in, out, width, false, sendn);
+		std::cout << in.size() << " " << out.size() << std::endl;
 		MPI::COMM_WORLD.Gather(out.data(), sendn, LINE, full1.data(), sendn, LINE, 0);
 		std::vector<std::complex<double>> full2(full1.size());
 		if (rank == 0) {
