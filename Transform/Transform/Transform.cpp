@@ -139,6 +139,7 @@ int main()
 		MPI::COMM_WORLD.Bcast(&width, 1, MPI_UNSIGNED, 0);
 		unsigned sendn = width / cluster;
 		MPI::Datatype LINE = MPI::DOUBLE.Create_contiguous(width * 2);
+		LINE.Commit();
 
 		std::vector<std::complex<double>> full1;
 		if (rank == 0) {
