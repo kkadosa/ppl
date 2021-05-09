@@ -56,37 +56,6 @@ void ComplexToReal(std::vector<std::complex<double>>&in, std::vector<unsigned ch
 	}
 }
 
-/*
-void DFT(std::vector<std::complex<double>>& in, std::vector<std::complex<double>>& out, unsigned w, unsigned h, bool horizontal, bool inverse)
-{
-	out.clear();
-	out.resize(in.size());
-
-	for (unsigned i = 0; i < h; ++i)
-	{
-		for (unsigned k = 0; k < w; ++k)
-		{
-			std::complex<double> sum(0.0, 0.0);
-			for (unsigned j = 0; j < w; ++j)
-			{
-				size_t addr = horizontal ? j + i * w : i + j * w;
-				auto angle = (inverse ? -2.0f : 2.0) * M_PI * j * k / w;
-				sum.real(sum.real() + in[addr].real() * cos(angle) - in[addr].imag() * sin(angle));
-				sum.imag(sum.imag() + in[addr].real() * sin(angle) + in[addr].imag() * cos(angle));
-			}
-
-			if (!inverse)
-			{
-				sum *= 1.0 / w;
-			}
-
-			out[k + i * w] = sum;
-		}
-		std::cout << i << std::endl;
-	}
-}
-*/
-
 void transform(std::vector<std::complex<double>>& in, std::vector<std::complex<double>>& out, unsigned width, bool inverse, unsigned sendn) {
 	out.clear();
 	out.resize(in.size());
@@ -106,7 +75,7 @@ void transform(std::vector<std::complex<double>>& in, std::vector<std::complex<d
 			}
 			out[k + i * width] = sum;
 		}
-		std::cout << i << std::endl;
+		//std::cout << i << std::endl;
 	}
 }
 
@@ -133,7 +102,7 @@ int main()
 		loadPNG(inName, width, h, image);
 	}
 
-	for (int l = 0; l < 1; ++l) {
+	for (int l = 0; l < 40; ++l) {
 		auto start = std::chrono::high_resolution_clock::now();
 
 		MPI::COMM_WORLD.Bcast(&width, 1, MPI_UNSIGNED, 0);
@@ -150,7 +119,7 @@ int main()
 
 		MPI::COMM_WORLD.Scatter(full1.data(), sendn, LINE, in.data(), sendn, LINE, 0);
 		transform(in, out, width, false, sendn);
-		std::cout << in.size() << " " << out.size() << std::endl;
+		//std::cout << in.size() << " " << out.size() << std::endl;
 		MPI::COMM_WORLD.Gather(out.data(), sendn, LINE, full1.data(), sendn, LINE, 0);
 		std::vector<std::complex<double>> full2(full1.size());
 		if (rank == 0) {
@@ -162,7 +131,9 @@ int main()
 		if (rank == 0) {
 			t(full2, full1, width);
 			ComplexToReal(full1, image);
-			savePNG(dftName, width, width, image);
+			if (l == 0) {
+				savePNG(dftName, width, width, image);
+			}
 			std::cout << "DFT finished" << std::endl;
 		}
 
@@ -178,7 +149,9 @@ int main()
 		if (rank == 0) {
 			t(full2, full1, width);
 			ComplexToReal(full1, image);
-			savePNG(dftName, width, width, image);
+			if (l == 0) {
+				savePNG(outName, width, width, image);
+			}
 			std::cout << "IDFT finished" << std::endl;
 		}
 
@@ -187,23 +160,7 @@ int main()
 			std::cout << cluster << " " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
 		}
 	}
-
-	/*
-	std::vector<std::complex<double>> f1;
-	std::vector<std::complex<double>> f2;
-	RealToComplex(image, f1);
-	DFT(f1, f2, w, h, true, false);
-	DFT(f2, f1, w, h, false, false);
-	std::cout << "DFT finished" << std::endl;
-	ComplexToReal(f1, image);
-	savePNG(dftName, w, h, image);
-
-	DFT(f1, f2, w, h, true, true);
-	DFT(f2, f1, w, h, false, true);
-	std::cout << "IDFT finished" << std::endl;
-	ComplexToReal(f1, image);
-	savePNG(outName, w, h, image);
-	*/
+	MPI::Finalize();
 	return 0;
 }
 
