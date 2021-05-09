@@ -106,7 +106,7 @@ void transform(std::vector<std::complex<double>>& in, std::vector<std::complex<d
 			}
 			out[k + i * width] = sum;
 		}
-		//std::cout << i << std::endl;
+		std::cout << i << std::endl;
 	}
 }
 
@@ -136,12 +136,10 @@ int main()
 	for (int l = 0; l < 1; ++l) {
 		auto start = std::chrono::high_resolution_clock::now();
 
-		std::cout << "B" << std::endl;
 		MPI::COMM_WORLD.Bcast(&width, 1, MPI_UNSIGNED, 0);
 		unsigned sendn = width / cluster;
 		MPI::Datatype LINE = MPI::DOUBLE.Create_contiguous(width * 2);
 
-		std::cout << "A" << std::endl;
 		std::vector<std::complex<double>> full1;
 		if (rank == 0) {
 			RealToComplex(image, full1);
