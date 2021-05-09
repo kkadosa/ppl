@@ -7,7 +7,6 @@
 
 #include "lodepng.h"
 #include "mpi.h"
-#include "Transform.h"
 
 #ifndef M_PI
 constexpr auto  M_PI = 3.14159265358979323846;
@@ -170,7 +169,6 @@ int main()
 		MPI::COMM_WORLD.Scatter(full1.data(), sendn, LINE, in.data(), sendn, LINE, 0);
 		transform(in, out, width, true, sendn);
 		MPI::COMM_WORLD.Gather(out.data(), sendn, LINE, full1.data(), sendn, LINE, 0);
-		std::vector<std::complex<double>> full2(full1.size());
 		if (rank == 0) {
 			t(full1, full2, width);
 		}
